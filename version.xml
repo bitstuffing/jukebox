@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<plugin>
+	<file>https://github.com/harddevelop/jukebox/archive/master.zip</file>
+	<tag>0.0.1</tag>
+	<version>1</version>
+	<date>26/11/2015</date>
+	<changes>Development update. Added new provider 977music.com for streaming. But at this moment it works fine</changes>
+</plugin>

@@ -1,0 +1,5 @@
+<settings>
+	<category label="General">
+		<setting id="remote_updater" type="text" label="Remote xml for update" value="https://github.com/harddevelop/jukebox/raw/master/version.xml" default="https://github.com/harddevelop/jukebox/raw/master/version.xml" enable="true"/>
+	</category>
+</settings>
