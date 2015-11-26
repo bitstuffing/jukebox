@@ -10,7 +10,7 @@ import CommonFunctions as common
 
 REMOTE_FILE_XML = xbmcplugin.getSetting(int(sys.argv[1]), "remote_updater")
 
-ROOT_DIR = xbmcaddon.Addon(id='org.harddevelop.kodi.tv').getAddonInfo('path')
+ROOT_DIR = xbmcaddon.Addon(id='org.harddevelop.kodi.juke').getAddonInfo('path')
 
 def update():
     #download ZIP file
