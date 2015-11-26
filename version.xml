@@ -2,7 +2,7 @@
 <plugin>
 	<file>https://github.com/harddevelop/jukebox/archive/master.zip</file>
 	<tag>0.0.1</tag>
-	<version>1</version>
+	<version>2</version>
 	<date>26/11/2015</date>
-	<changes>Development update. Added new provider 977music.com for streaming. But at this moment it works fine</changes>
+	<changes>Development update. Sorry, fixed a bug related to incomplete json uncommented line</changes>
 </plugin>

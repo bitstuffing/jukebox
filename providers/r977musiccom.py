@@ -60,7 +60,7 @@ class R977Musiccom():
     @staticmethod
     def parseListSongs(songs,html):
         x = []
-        jsonSongs = json.load(songs)
+        #jsonSongs = json.load(songs)
         for elementHtml in html.split("<Channel "):
             element = {}
             title = Decoder.extract('name="','"',elementHtml)
