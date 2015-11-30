@@ -2,7 +2,7 @@
 <plugin>
 	<file>https://github.com/harddevelop/jukebox/archive/master.zip</file>
 	<tag>0.0.1</tag>
-	<version>2</version>
-	<date>26/11/2015</date>
-	<changes>Development update. Sorry, fixed a bug related to incomplete json uncommented line</changes>
+	<version>3</version>
+	<date>30/11/2015</date>
+	<changes>Development update. Added direct support for radio.net provider</changes>
 </plugin>

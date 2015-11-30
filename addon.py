@@ -10,8 +10,9 @@ import xbmcaddon
 from core import updater
 from core import logger
 from providers.r977musiccom import R977Musiccom
+from providers.radionet import Radionet
 from core.decoder import Decoder
-import re
+#import re
 
 ##INIT GLOBALS##
 
@@ -65,7 +66,7 @@ def add_dir(name,url,mode,iconimage,provider,page="", thumbnailImage='',lastCook
     liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
     liz.setInfo(type='Video', infoLabels={'Title': name})
 
-    if mode == 2 or (mode >=100 and mode<=101): #playable, not browser call, needs decoded to be playable or rtmp to be obtained
+    if mode == 2 or (mode >=100 and mode<=102): #playable, not browser call, needs decoded to be playable or rtmp to be obtained
         liz.setProperty("IsPlayable", "true")
         liz.setPath(url)
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False) #Playable
@@ -127,22 +128,27 @@ def open(url,page):
 
 def browse_channels(url,page): #BROWSES ALL PROVIDERS
     add_dir("977music.com", '977musiccom', 4, "http://www.977music.com/images11/logo.png", '977musiccom', 0)
+    add_dir("radio.net", 'radionet', 4, "http://www.aquaradio.net16.net/Media/Logos/radio.net.png", 'radionet', 0)
 
 def browse_channel(url,page,provider,cookie=''): #MAIN TREE BROWSER IS HERE!
     if provider == "977musiccom":
         jsonChannels = R977Musiccom.getChannels(page,cookie)
-        i=0
         for item in jsonChannels:
             mode = 4
-            i+=1
             image = icon
             if item.has_key("thumbnail"):
                 image = item["thumbnail"]
             if item.has_key("finalLink"):
                 mode = 2
             add_dir(item["title"],item["link"],mode,image,"977musiccom",item["link"],'',R977Musiccom.cookie)
-    elif provider== "hdfulltv":
-        pass
+    elif provider== "radionet":
+        jsonChannels = Radionet.getChannels(page,cookie)
+        mode = 102
+        for item in jsonChannels:
+            image = icon
+            if item.has_key("thumbnail"):
+                image = item["thumbnail"]
+            add_dir(item["title"],item["link"],mode,image,"radionet",item["link"],'',Radionet.cookie)
     logger.info(provider)
 
 def open_channel(url,page,provider=""):
@@ -207,6 +213,11 @@ def init():
         open(link,page)
     elif mode == 101:
         jsonChannels = R977Musiccom.getChannels(page,cookie)
+        url = jsonChannels[0]["link"]
+        logger.info("found link: "+url+", launching...")
+        open(url,page) #same that 2, but reserved for rtmp
+    elif mode == 102:
+        jsonChannels = Radionet.getChannels(page,cookie)
         url = jsonChannels[0]["link"]
         logger.info("found link: "+url+", launching...")
         open(url,page) #same that 2, but reserved for rtmp

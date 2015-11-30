@@ -1,12 +1,9 @@
 import httplib
 import urllib
-import os
-import binascii
 import base64
 from StringIO import StringIO
 import gzip
 from core.decoder import Decoder
-from core import jsunpack
 from core import logger
 
 class R977Musiccom():
@@ -19,12 +16,12 @@ class R977Musiccom():
     def getChannels(page,cookie=''):
         x = []
         referer = R977Musiccom.REFERER
-        print page
+        #print page
         if str(page) == '0':
             page=R977Musiccom.MAIN_URL
             html = R977Musiccom.getContentFromUrl(page,"",R977Musiccom.cookie,referer)
             stations_lists = R977Musiccom.getContentFromUrl("http://www.977music.com/ajax/stations_list_xml.php","",R977Musiccom.cookie,referer)
-            print "station list: "+stations_lists
+            #print "station list: "+stations_lists
         else:
             page = base64.standard_b64decode(page)
             logger.info("launching petition from page: "+page)
@@ -50,11 +47,7 @@ class R977Musiccom():
         if html.find('<div class="list_box">')>-1: #it's a list, needs decode
             table = Decoder.extract('<div class="list_box">','</ul>',html)
             x = R977Musiccom.extractElements(table,html)
-            print "done!"
-        else:
-            print "else content!"
-            print html
-            pass
+            #print "done!"
         return x
 
     @staticmethod
