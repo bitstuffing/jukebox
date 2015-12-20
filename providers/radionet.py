@@ -2,6 +2,7 @@ import httplib
 import urllib
 from StringIO import StringIO
 import gzip
+from core.downloader import Downloader
 from core.decoder import Decoder
 from core import logger
 
@@ -49,7 +50,7 @@ class Radionet():
         return x
 
     @staticmethod
-    def getContentFromUrl(url,data="",cookie="",referer="",ajax=False):
+    def getContentFromUrl(url,data="",cookie="",referer="",ajax=False): #Override
         form = urllib.urlencode(data)
         host = url[url.find("://")+len("://"):]
         subUrl = ""

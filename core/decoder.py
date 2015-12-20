@@ -26,6 +26,12 @@ class Decoder():
             link = Decoder.decodeStreamin(link)
         elif link.find("http://thevideo.me")>-1:
             link = Decoder.decodeThevideo(link)
+        elif link.find("http://streamplay.to")>-1:
+            link = Decoder.decodeStreamplay(link)
+        elif link.find("http://vidxtreme.to")>-1:
+            link = Decoder.decodeVidXtreme(link)
+        elif link.find("http://streame.net")>-1:
+            link = Decoder.decodeStreame(link)
         return link
 
     @staticmethod
@@ -253,6 +259,19 @@ class Decoder():
         return token
 
     @staticmethod
+    def decodeStreame(link):
+        html = Decoder.getFinalHtmlFromLink(link) #has common attributes in form with powvideo and others
+        return Decoder.extract('[{file:"','"',html)
+
+    @staticmethod
+    def decodeVidXtreme(link):
+        return Decoder.decodePowvideo(link)
+
+    @staticmethod
+    def decodeStreamplay(link):
+        return Decoder.decodePowvideo(link)
+
+    @staticmethod
     def decodeThevideo(link):
         html = Decoder.getFinalHtmlFromLink(link,5,True)
         mp4Link = Decoder.rExtract(", file: '","'",html) #there are more qualities, so I get the last one which is the best of
@@ -342,7 +361,7 @@ class Decoder():
         #return html
 
     @staticmethod
-    def getContent(url,data="",referer="",cookie="",dnt=True,ajax=False):
+    def getContent(url,data="",referer="",cookie="",dnt=True):
         logger.info('Using url: '+url)
         request = urllib2.Request(url)
         host = url[url.find("://")+3:]
@@ -357,8 +376,6 @@ class Decoder():
         request.add_header("Accept-Language", "en-US,en;q=0.8,es-ES;q=0.5,es;q=0.3")
         request.add_header("Connection", "keep-alive")
         if dnt:
-            request.add_header("DNT", "1")
-        if ajax:
             request.add_header("DNT", "1")
         request.add_header("Host", host)
 

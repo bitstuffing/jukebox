@@ -3,10 +3,11 @@ import urllib
 import base64
 from StringIO import StringIO
 import gzip
+from core.downloader import Downloader
 from core.decoder import Decoder
 from core import logger
 
-class R977Musiccom():
+class R977Musiccom(Downloader):
 
     cookie = ""
     MAIN_URL = "http://www.977music.com/"
@@ -92,7 +93,7 @@ class R977Musiccom():
         return x
 
     @staticmethod
-    def getContentFromUrl(url,data="",cookie="",referer="",ajax=False):
+    def getContentFromUrl(url,data="",cookie="",referer="",ajax=False): #Override
         form = urllib.urlencode(data)
         host = url[url.find("://")+len("://"):]
         subUrl = ""
