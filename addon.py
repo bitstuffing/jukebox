@@ -154,13 +154,14 @@ def browse_channel(url,page,provider,cookie=''): #MAIN TREE BROWSER IS HERE!
             add_dir(item["title"],item["link"],mode,image,"radionet",item["link"],'',Radionet.cookie)
     elif provider== "redmp3cc":
         jsonChannels = Redmp3cc.getChannels(page,cookie)
-        mode = 4
         for item in jsonChannels:
+            mode = 4
             image = icon
             if item.has_key("thumbnail"):
                 image = item["thumbnail"]
             if item["link"].find(".html")==-1:
                 mode = 103
+                logger.info("detected final link: "+item["link"])
             add_dir(item["title"],item["link"],mode,image,"redmp3cc",item["link"],'',Redmp3cc.cookie)
     logger.info(provider)
 

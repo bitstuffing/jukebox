@@ -25,13 +25,18 @@ class Redmp3cc(Downloader):
             page=Redmp3cc.MAIN_URL+"/"
             html = Downloader.getContentFromUrl(page,"",cookie,"")
             x = Redmp3cc.extractElementsPlayer(html)
-        elif str(page) == 'search.html':
-            keyboard = xbmc.Keyboard("")
-            keyboard.doModal()
-            text = ""
-            if (keyboard.isConfirmed()):
-                text = keyboard.getText()
-                x = Redmp3cc.search(text)
+        elif str(page).find('search.html')!=-1:
+            if str(page).find('search.html/')==-1:
+                keyboard = xbmc.Keyboard("")
+                keyboard.doModal()
+                text = ""
+                if (keyboard.isConfirmed()):
+                    text = keyboard.getText()
+                    x = Redmp3cc.search(text)
+            else:
+                text = Decoder.rExtract('search.html/','/',page)
+                page = int(page[page.rfind('/')+1:])
+                x = Redmp3cc.search(text,page)
         elif str(page).find(".html")!=-1:
             if str(page) == 'albums.html'!=-1:
                 page = Redmp3cc.MAIN_URL
@@ -61,7 +66,7 @@ class Redmp3cc(Downloader):
 
     @staticmethod
     def search(text,page=0,cookie=''):
-        page = "http://redmp3.cc/mp3-"+urllib.unquote_plus(text)+"/"
+        page = "http://redmp3.cc/mp3-"+urllib.unquote_plus(text)+"/"+str(page)
         html = Downloader.getContentFromUrl(page,"",cookie,"")
         x = Redmp3cc.extractElementsPlayer(html)
         return x
@@ -102,9 +107,19 @@ class Redmp3cc(Downloader):
                 link = Decoder.extract('data-mp3url="','" ',value)
                 element["title"] = title
                 element["link"] = Redmp3cc.MAIN_URL+link
+                if value.find('<img src="')!=-1:
+                    element["thumbnail"] = Redmp3cc.MAIN_URL+Decoder.extract('<img src="','" ',value)
                 logger.info("append: "+title+", link: "+element["link"])
                 x.append(element)
             i+=1
+        if len(x)>0 and html.find(' class="button">Next page')!=-1:
+            nextLink = "search.html/"+Decoder.rExtract('/mp3-','" class="button">Next page',html)
+            nextText = "Next page"
+            element = {}
+            element["link"] = nextLink
+            element["title"] = nextText
+            logger.info("append next search with link: "+nextLink)
+            x.append(element)
         return x
 
     @staticmethod
