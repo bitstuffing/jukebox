@@ -11,6 +11,7 @@ from core import updater
 from core import logger
 from providers.r977musiccom import R977Musiccom
 from providers.radionet import Radionet
+from providers.redmp3cc import Redmp3cc
 from core.decoder import Decoder
 #import re
 
@@ -23,6 +24,7 @@ MAIN_URL = xbmcplugin.getSetting(int(sys.argv[1]), "remote_repository")
 
 ##CONSTANTS PARTS##
 BROWSE_CHANNELS = "browse_channels"
+MAX = 103
 
 def get_params():
     param=[]
@@ -66,7 +68,7 @@ def add_dir(name,url,mode,iconimage,provider,page="", thumbnailImage='',lastCook
     liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
     liz.setInfo(type='Video', infoLabels={'Title': name})
 
-    if mode == 2 or (mode >=100 and mode<=102): #playable, not browser call, needs decoded to be playable or rtmp to be obtained
+    if mode == 2 or (mode >=100 and mode<=MAX): #playable, not browser call, needs decoded to be playable or rtmp to be obtained
         liz.setProperty("IsPlayable", "true")
         liz.setPath(url)
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False) #Playable
@@ -129,6 +131,7 @@ def open(url,page):
 def browse_channels(url,page): #BROWSES ALL PROVIDERS
     add_dir("977music.com", '977musiccom', 4, "http://www.977music.com/images11/logo.png", '977musiccom', 0)
     add_dir("radio.net", 'radionet', 4, "http://www.aquaradio.net16.net/Media/Logos/radio.net.png", 'radionet', 0)
+    add_dir("redmp3.cc", 'redmp3cc', 4, "", 'redmp3cc', 0)
 
 def browse_channel(url,page,provider,cookie=''): #MAIN TREE BROWSER IS HERE!
     if provider == "977musiccom":
@@ -149,6 +152,16 @@ def browse_channel(url,page,provider,cookie=''): #MAIN TREE BROWSER IS HERE!
             if item.has_key("thumbnail"):
                 image = item["thumbnail"]
             add_dir(item["title"],item["link"],mode,image,"radionet",item["link"],'',Radionet.cookie)
+    elif provider== "redmp3cc":
+        jsonChannels = Redmp3cc.getChannels(page,cookie)
+        mode = 4
+        for item in jsonChannels:
+            image = icon
+            if item.has_key("thumbnail"):
+                image = item["thumbnail"]
+            if item["link"].find(".html")==-1:
+                mode = 103
+            add_dir(item["title"],item["link"],mode,image,"redmp3cc",item["link"],'',Redmp3cc.cookie)
     logger.info(provider)
 
 def open_channel(url,page,provider=""):
@@ -181,13 +194,14 @@ def init():
     except:
         pass
     try:
+        logger.info("cookie was filled with: "+params["cookie"])
         cookie=urllib.unquote_plus(params["cookie"])
     except:
         pass
 
     #print "Mode: "+str(mode)
-    #print "URL: "+str(url)
-    #print "page: "+str(page)
+    print "URL: "+str(url)
+    print "cookie: "+str(cookie)
 
     if mode==None: #init
         get_main_dirs()
@@ -221,6 +235,12 @@ def init():
         url = jsonChannels[0]["link"]
         logger.info("found link: "+url+", launching...")
         open(url,page) #same that 2, but reserved for rtmp
+    elif mode == 103:
+        jsonChannels = Redmp3cc.getChannels(url,cookie)
+        url = jsonChannels[0]["link"]
+        logger.info("found link: "+url+", launching...")
+        open(url,page) #same that 2, but reserved for rtmp
+        os.remove(url)
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 init()

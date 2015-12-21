@@ -2,7 +2,7 @@
 <plugin>
 	<file>https://github.com/harddevelop/jukebox/archive/master.zip</file>
 	<tag>0.0.1</tag>
-	<version>3</version>
-	<date>30/11/2015</date>
-	<changes>Development update. Added direct support for radio.net provider</changes>
+	<version>4</version>
+	<date>21/12/2015</date>
+	<changes>Development update. Added support for redmp3.cc provider</changes>
 </plugin>
