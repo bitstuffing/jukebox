@@ -52,9 +52,10 @@ class Redmp3cc(Downloader):
             logger.info("cookie is: "+cookie+", referer is: "+referer)
             headers = downloadtools.buildMusicDownloadHeaders(host,cookie,referer)
             filename= Decoder.extract('filename=','&',response)
-            ROOT_DIR = xbmcaddon.Addon(id='org.harddevelop.kodi.juke').getAddonInfo('path')
+            #ROOT_DIR = xbmcaddon.Addon(id='org.harddevelop.kodi.juke').getAddonInfo('path')
+            ROOT_DIR = xbmc.translatePath('special://temp/')
+            logger.info("using special root folder: "+ROOT_DIR)
             downloadtools.downloadfile(response,ROOT_DIR+"/"+filename,headers,False,True)
-            #downloadtools.downloadfileGzipped(response,filename,headers)
             x.append(Redmp3cc.buildDownloadedFile(xbmc.makeLegalFilename(ROOT_DIR+"/"+filename)))
         return x
 

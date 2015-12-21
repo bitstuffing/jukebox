@@ -240,7 +240,8 @@ def init():
         url = jsonChannels[0]["link"]
         logger.info("found link: "+url+", launching...")
         open(url,page) #same that 2, but reserved for rtmp
-        os.remove(url)
+        logger.info("remove temp: "+url)
+        #os.remove(url)
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 init()
