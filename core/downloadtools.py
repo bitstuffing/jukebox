@@ -11,7 +11,7 @@ import traceback # for download problems
 import StringIO
 import gzip
 
-addon = xbmcaddon.Addon(id='org.harddevelop.kodi.tv')
+addon = xbmcaddon.Addon(id='org.harddevelop.kodi.juke')
 
 def sec_to_hms(seconds):
     m,s = divmod(int(seconds), 60)
