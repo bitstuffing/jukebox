@@ -2,7 +2,7 @@
 <plugin>
 	<file>https://github.com/harddevelop/jukebox/archive/master.zip</file>
 	<tag>0.0.1</tag>
-	<version>5</version>
-	<date>21/12/2015</date>
-	<changes>Development update. Added pagination for search into redmp3.cc provider</changes>
+	<version>6</version>
+	<date>22/12/2015</date>
+	<changes>Development update. Added incomplete provider fildo.net, but it's able to be used</changes>
 </plugin>

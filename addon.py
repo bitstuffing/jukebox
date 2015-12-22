@@ -12,6 +12,7 @@ from core import logger
 from providers.r977musiccom import R977Musiccom
 from providers.radionet import Radionet
 from providers.redmp3cc import Redmp3cc
+from providers.fildonet import Fildonet
 from core.decoder import Decoder
 #import re
 
@@ -131,6 +132,7 @@ def open(url,page):
 def browse_channels(url,page): #BROWSES ALL PROVIDERS
     add_dir("977music.com", '977musiccom', 4, "http://www.977music.com/images11/logo.png", '977musiccom', 0)
     add_dir("radio.net", 'radionet', 4, "http://www.aquaradio.net16.net/Media/Logos/radio.net.png", 'radionet', 0)
+    add_dir("fildo.net", 'fildonet', 4, "http://fildo.net/images/icons/logo2small2.png", 'fildonet', 0)
     add_dir("redmp3.cc", 'redmp3cc', 4, "", 'redmp3cc', 0)
 
 def browse_channel(url,page,provider,cookie=''): #MAIN TREE BROWSER IS HERE!
@@ -163,6 +165,17 @@ def browse_channel(url,page,provider,cookie=''): #MAIN TREE BROWSER IS HERE!
                 mode = 103
                 logger.info("detected final link: "+item["link"])
             add_dir(item["title"],item["link"],mode,image,"redmp3cc",item["link"],'',Redmp3cc.cookie)
+    elif provider == 'fildonet':
+        jsonChannels = Fildonet.getChannels(page,cookie)
+        for item in jsonChannels:
+            mode = 4
+            image = icon
+            if item.has_key("thumbnail"):
+                image = item["thumbnail"]
+            if item["link"].find(".mp3")!=-1:
+                mode = 2
+                logger.info("detected final file: "+item["link"])
+            add_dir(item["title"],item["link"],mode,image,"fildonet",item["link"],'',Redmp3cc.cookie)
     logger.info(provider)
 
 def open_channel(url,page,provider=""):
@@ -210,12 +223,12 @@ def init():
     elif mode==1: #get channels
         get_dirs(url, '', page)
 
-    elif mode == 2: #open video in player
+    elif mode == 2: #open multimedia file in player
         open(url,page)
     elif mode == 3:
         browse_channels(url,page)
     elif mode == 4:
-        browse_channel(url,page,provider,cookie)
+        browse_channel(url,page,provider,cookie) #main logic
     elif mode == 5:
         open_channel(url,page)
     elif mode == 0: #update
