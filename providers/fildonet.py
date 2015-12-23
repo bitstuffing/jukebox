@@ -24,6 +24,7 @@ class Fildonet(Downloader):
     ARTIST = "http://fildo.net/info.php?show=1&artist="
     PLAY = "http://fildo.net/images/icons/play.png"
     ALBUM = "http://fildo.net/albumInfo.php?picAlbum=ok&albumId="
+    SONG = "http://fildo.net/albumInfo.php?songId="
 
     @staticmethod
     def getChannels(page,cookie='',referer=''):
@@ -42,17 +43,12 @@ class Fildonet(Downloader):
         elif str(page) == 'lastestplaylists':
             pass
         elif str(page).find('search')!=-1:
-            if str(page).find('search/')==-1:
-                keyboard = xbmc.Keyboard("")
-                keyboard.doModal()
-                text = ""
-                if (keyboard.isConfirmed()):
-                    text = keyboard.getText()
-                    x = Fildonet.search(text)
-            else:
-                text = Decoder.rExtract('search.html/','/',page)
-                page = int(page[page.rfind('/')+1:])
-                x = Fildonet.search(text,page)
+            keyboard = xbmc.Keyboard("")
+            keyboard.doModal()
+            text = ""
+            if (keyboard.isConfirmed()):
+                text = keyboard.getText()
+                x = Fildonet.search(text)
         else:
             page = base64.standard_b64decode(page)
             logger.info("ELSE --- page is: "+page)
@@ -79,9 +75,31 @@ class Fildonet(Downloader):
 
     @staticmethod
     def search(text,page=0,cookie=''):
-        page = "http://redmp3.cc/mp3-"+urllib.unquote_plus(text)+"/"+str(page)
+        page = "http://fildo.net/autocomplete163.php?term="+urllib.quote_plus(text)
         html = Downloader.getContentFromUrl(page,"",cookie,"")
-        x = Fildonet.extractElementsPlayer(html)
+        x = Fildonet.extractElementsSearch(html)
+        return x
+
+    @staticmethod
+    def extractElementsSearch(html):
+        jsonContent = json.loads(html)
+        x = []
+        for jsonValues in jsonContent:
+            element = {}
+            element["title"] = jsonValues["label"]+" - "+jsonValues["category"]
+            if jsonValues["category"] == 'Artists':
+                link = base64.standard_b64encode(Fildonet.ARTIST+str(jsonValues["label"]))
+            elif jsonValues["category"] == 'Albums':
+                link = base64.standard_b64encode(Fildonet.ALBUM+str(jsonValues["id"]))
+            elif jsonValues["category"] == 'Songs':
+                id = jsonValues["id"]
+                html2 = Downloader.getContentFromUrl(Fildonet.SONG+str(id))
+                songsJSONS = json.loads(html2)
+                for songsJSON in songsJSONS:
+                    link = songsJSON["mp3Url"]
+                    element["thumbnail"] = songsJSON["picUrl"]
+            element["link"] = link
+            x.append(element)
         return x
 
     @staticmethod
@@ -101,6 +119,10 @@ class Fildonet(Downloader):
         element3["title"] = 'Latest 100 Playlists'
         x.append(element3)
         '''
+        elementS = {}
+        elementS["link"] = 'search'
+        elementS["title"] = 'Search'
+        x.append(elementS)
         return x
 
     @staticmethod
