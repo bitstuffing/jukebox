@@ -8,4 +8,17 @@
     <string id="10007">Browse by Country</string>
     <string id="10008">Browse by Genre</string>
     <string id="10011">¡Update available!</string>
+
+    <string id="11010">Yes</string>
+    <string id="11011">No</string>
+    <string id="11012">Confirm</string>
+    <string id="11013">Cancel</string>
+    <string id="11014">Update</string>
+    <string id="11015">Keepr</string>
+
+    <string id="30000">Settings</string>
+    <string id="30002">Remote XML updater</string>
+
+    <string id="30010">Development</string>
+    <string id="30011">Debug</string>
 </strings>

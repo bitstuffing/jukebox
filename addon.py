@@ -130,9 +130,9 @@ def open(url,page):
         #print(traceback.format_exc())
 
 def browse_channels(url,page): #BROWSES ALL PROVIDERS
+    add_dir("fildo.net", 'fildonet', 4, "http://fildo.net/images/icons/logo2small2.png", 'fildonet', 0)
     add_dir("977music.com", '977musiccom', 4, "http://www.977music.com/images11/logo.png", '977musiccom', 0)
     add_dir("radio.net", 'radionet', 4, "http://www.aquaradio.net16.net/Media/Logos/radio.net.png", 'radionet', 0)
-    add_dir("fildo.net", 'fildonet', 4, "http://fildo.net/images/icons/logo2small2.png", 'fildonet', 0)
     add_dir("redmp3.cc", 'redmp3cc', 4, "", 'redmp3cc', 0)
 
 def browse_channel(url,page,provider,cookie=''): #MAIN TREE BROWSER IS HERE!
@@ -174,6 +174,7 @@ def browse_channel(url,page,provider,cookie=''): #MAIN TREE BROWSER IS HERE!
                 image = item["thumbnail"]
             if item["link"].find(".mp3")!=-1:
                 mode = 2
+                item["link"] = Fildonet.parseLinkToLoadBalancer(item["link"])
                 logger.info("detected final file: "+item["link"])
             add_dir(item["title"],item["link"],mode,image,"fildonet",item["link"],'',Redmp3cc.cookie)
     logger.info(provider)
@@ -232,7 +233,8 @@ def init():
     elif mode == 5:
         open_channel(url,page)
     elif mode == 0: #update
-        updater.update()
+        if xbmcgui.Dialog().yesno(addon.getLocalizedString(10011),updater.getUpdateInfo(), "", "", addon.getLocalizedString(11013), addon.getLocalizedString(11014) ):
+            updater.update()
         get_main_dirs()
     elif mode == 100: #decode provider link
         logger.info("decoding: "+url)

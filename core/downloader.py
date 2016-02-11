@@ -6,17 +6,19 @@ class Downloader():
     cookie = ""
 
     @staticmethod
-    def getContentFromUrl(url,data="",cookie="",referer="",ajax=False):
-        form = urllib.urlencode(data)
+    def getContentFromUrl(url,data="",cookie="",referer="",ajax=False,launchLocation=True):
         host = url[url.find("://")+len("://"):]
         subUrl = ""
         logger.info("url is: "+host)
         if host.find("/")>-1:
             host = host[0:host.find("/")]
             subUrl = url[url.find(host)+len(host):]
-        logger.info("host: "+host+":80 , subUrl: "+subUrl)
+        if host.find(":")==-1:
+            logger.info("host: "+host+":80 , subUrl: "+subUrl)
+        else:
+            logger.info("host: "+host+" , subUrl: "+subUrl)
         headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:43.0) Gecko/20100101 Firefox/43.0",
             "Accept-Language" : "en-US,en;q=0.8,es-ES;q=0.5,es;q=0.3",
             #"Accept-Encoding" : "gzip, deflate",
             "Conection" : "keep-alive",
@@ -34,9 +36,16 @@ class Downloader():
         if ajax:
             headers["X-Requested-With"] = "XMLHttpRequest"
             headers["Accept"] = "*/*"
-
-        h = httplib.HTTPConnection(host+":80")
-        h.request('GET', subUrl, data, headers)
+        if host.find(":")==-1:
+            h = httplib.HTTPConnection(host+":80")
+        else:
+            h = httplib.HTTPConnection(host)
+        if data == "":
+            logger.info("launching GET...")
+            h.request('GET', subUrl, data, headers)
+        else:
+            logger.info("launching POST...")
+            h.request('POST', subUrl, data, headers)
         r = h.getresponse()
 
         headersReturned = r.getheaders()
@@ -59,7 +68,7 @@ class Downloader():
             Downloader.cookie = cfduid
         logger.info("cookie was updated to: "+Downloader.cookie)
         html = r.read()
-        if location != '':
+        if location != '' and launchLocation:
             logger.info("launching redirection to: "+location)
             html = Downloader.getContentFromUrl(location,data,Downloader.cookie,url)
         return html

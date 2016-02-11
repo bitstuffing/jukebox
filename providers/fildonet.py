@@ -65,13 +65,24 @@ class Fildonet(Downloader):
         x = []
         for value in jsonData["songs"]:
             element = {}
-            element["link"] = value["mp3Url"]
+            link = value["mp3Url"]
+            logger.debug("brute link is: "+link)
+            element["link"] = link
             element["thumbnail"] = jsonData["picUrl"]
             element["title"] = value["name"]
             element["finalLink"] = True
             logger.info("append element: "+element["title"]+", link: "+element["link"])
             x.append(element)
         return x
+
+    @staticmethod
+    def parseLinkToLoadBalancer(link):
+        if link.find("http://p")>-1 and link.find(".")>-1: #.replace("http://p3.","http://219.138.27.58/m2.")
+            logger.debug("detected link: "+link)
+            postLink = link[link.find(".")+1:]
+            link = "http://219.138.27.58/m2."+postLink
+        logger.info("processed link is: "+link)
+        return link
 
     @staticmethod
     def search(text,page=0,cookie=''):
